@@ -1,7 +1,9 @@
 # pong-dqn-rl
 Deep Dueling Neural Network Reinforcement Learning for Pong. 
 
-This is an implementation of the Duel Double DQN algorithm in PyTorch for solving the OpenAI GYM Atari Pong environment. The agent learns to play to an impressive standard in just 900 episodes.
+This is an implementation of the Duel Double DQN algorithm in PyTorch for solving the OpenAI GYM Atari Pong environment. 
+
+The agent learns to play to an impressive standard in just 1,000 episodes.
 
 # Requirements
 

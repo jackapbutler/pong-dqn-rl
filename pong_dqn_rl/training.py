@@ -26,13 +26,14 @@ if not os.path.exists(MODEL_PATH):
 
 environment: gym.Env = gym.make(config["GAME"]["env"], render_mode=RENDER_GAME)
 agent: Agent = Agent(environment)
+training_results = []
 
 if LOAD_FROM_FILE:
     agent.online_model.load_state_dict(torch.load(f"{MODEL_PATH}/model.pkl"))
 
     with open(f"{MODEL_PATH}/parameters.json") as outfile:
-        parameters = json.load(outfile)
-        agent.epsilon = parameters.get("epsilon")
+        loaded_parameters = json.load(outfile)
+        agent.epsilon = loaded_parameters.get("epsilon")
 
 last_100_ep_reward: Deque[float] = collections.deque(maxlen=100)
 total_step = 1  # Cumulative sum of all steps in episodes
@@ -87,24 +88,43 @@ for episode in range(0, int(config["TRAINING"]["max_episode"])):
             agent.adaptiveEpsilon()  # Decrease epsilon
 
         if done:  # Episode completed
-            currentTime = time.time()  # Keep current time
-            time_passed = currentTime - startTime  # Find episode duration
-            parameters = {"epsilon": agent.epsilon}
+            ep_results = [
+                episode,
+                total_reward,
+                total_loss,
+                total_max_q_val / step,
+                agent.epsilon,
+                time.time() - startTime,
+            ]
+            training_results.append(ep_results)
+            print(
+                f"Episode:{ep_results[0]} Reward:{ep_results[1]} Loss:{ep_results[2]} Avg_Max_Q:{ep_results[3]} Epsilon:{ep_results[4]} Duration:{ep_results[5]}"
+            )
 
-            if SAVE_MODELS and episode % int(config["SAVING"]["interval"]) == 0:
-                torch.save(agent.online_model.state_dict(), f"{MODEL_PATH}/model.pkl")
+            if SAVE_MODELS:
+                if episode % int(config["SAVING"]["interval"]) == 0:
+                    # TODO change to save checkpoints instead of overriting
+                    torch.save(
+                        agent.online_model.state_dict(), f"{MODEL_PATH}/model.pkl"
+                    )
 
-                with open(f"{MODEL_PATH}/parameters.json", "w") as outfile:
-                    json.dump(parameters, outfile)
+                    with open(f"{MODEL_PATH}/parameters.json", "w") as outfile:
+                        json.dump(
+                            {
+                                "epsilon": agent.epsilon,
+                                "configuration": {
+                                    sect: dict(config.items(sect))
+                                    for sect in config.sections()
+                                },
+                            },
+                            outfile,
+                        )
+
+                if episode == int(config["TRAINING"]["max_episode"]) - 1:
+                    with open(f"{MODEL_PATH}/training_logs.txt", "w") as resultfile:
+                        np.savetxt(resultfile, np.array(training_results))
 
             if TRAIN_MODEL:
                 # update target model
                 agent.target_model.load_state_dict(agent.online_model.state_dict())
-
-            last_100_ep_reward.append(total_reward)
-            avg_max_q_val = total_max_q_val / step
-
-            print(
-                f"Episode:{episode} Reward:{total_reward} Last_100_Avg_Rew:{statistics.mean(last_100_ep_reward)} Loss:{total_loss} Avg_Max_Q:{avg_max_q_val} Epsilon:{agent.epsilon,} Duration:{time_passed} Step/Total:{step}/{total_step}"
-            )
             break
