@@ -2,7 +2,7 @@
 import collections
 import configparser
 import json
-import statistics
+import sys
 import time
 from typing import Deque
 
@@ -36,6 +36,7 @@ if os.path.exists(MODEL_PATH):
         print(
             f"Preventing you from overriding the existing <{MODEL_PATH.split('/')[1]}> model! Change this if you like ... "
         )
+        sys.exit()
 else:
     os.makedirs(MODEL_PATH)
 
