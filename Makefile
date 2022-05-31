@@ -12,3 +12,6 @@ format: ## Formats the code, import statements and type hints
 
 format: ## Runs the tests in the tests directory
 	pytest tests/ 
+
+train: ## Runs a training session following the configuration in config.ini
+	poetry run pong_dqn_rl/training.py

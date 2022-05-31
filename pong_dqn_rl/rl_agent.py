@@ -39,18 +39,20 @@ class Agent:
         ]
 
         # Trust rate to our experiences
-        self.gamma = config["TRAINING"]["gamma"]  # Discount coef for future predictions
-        self.alpha = config["TRAINING"]["alpha"]  # Learning Rate
+        self.gamma = float(
+            config["TRAINING"]["gamma"]
+        )  # Discount coef for future predictions
+        self.alpha = float(config["TRAINING"]["alpha"])  # Learning Rate
 
         # After many experinces epsilon will be 0.05
         # So we will do less Explore more Exploit
         # Adaptive Epsilon Decay Rate
         self.epsilon = 1  # Explore or Exploit
-        self.epsilon_decay = config["TRAINING"]["epsilon"]
+        self.epsilon_decay = float(config["TRAINING"]["epsilon"])
         self.epsilon_minimum = 0.05  # Minimum for Explore
 
         # Deque holds replay mem.
-        self.memory = collections.deque(maxlen=config["TRAINING"]["max_memory"])
+        self.memory = collections.deque(maxlen=int(config["TRAINING"]["max_memory"]))
 
         # Create two model for DDQN algorithm
         self.online_model = dqn.DuelCNN(
