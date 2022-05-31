@@ -3,7 +3,7 @@ import collections
 import configparser
 import random
 from typing import Tuple
-import gym
+
 import cv2
 import dueling_qn as dqn
 import numpy as np
@@ -17,7 +17,7 @@ DEVICE = config["TRAINING"]["device"]
 
 
 class Agent:
-    def __init__(self, environment: gym.Env):
+    def __init__(self, environment):
         """
         Hyperparameters definition for Agent
         """
@@ -54,9 +54,12 @@ class Agent:
         self.memory = collections.deque(maxlen=int(config["TRAINING"]["max_memory"]))
 
         # Create two model for DDQN algorithm
-        self.online_model = dqn.DuelCNN(output_size=self.action_size).to(DEVICE)
-        self.target_model = dqn.DuelCNN(output_size=self.action_size).to(DEVICE)
-
+        self.online_model = dqn.DuelCNN(
+            h=self.target_h, w=self.target_w, output_size=self.action_size
+        ).to(DEVICE)
+        self.target_model = dqn.DuelCNN(
+            h=self.target_h, w=self.target_w, output_size=self.action_size
+        ).to(DEVICE)
         self.target_model.load_state_dict(self.online_model.state_dict())
         self.target_model.eval()
 

@@ -1,0 +1,1 @@
+{"epsilon": 1, "configuration": {"GAME": {"env": "PongDeterministic-v4"}, "SAVING": {"model_tag": "pong-cnn-test-v1-small", "interval": "50"}, "TRAINING": {"device": "cpu", "batch": "50", "max_episode": "10000", "max_step": "10000", "max_memory": "30000", "min_memory": "20000", "gamma": "0.97", "alpha": "0.00025", "epsilon": "0.99"}}}
