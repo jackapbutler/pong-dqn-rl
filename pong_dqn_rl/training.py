@@ -92,18 +92,18 @@ for episode in range(0, int(config["TRAINING"]["max_episode"])):
         if total_step % 1000 == 0:
             agent.adaptiveEpsilon()  # Decrease epsilon
 
-        if done:  # Episode completed
+        if done:
+            # Episode completed
             ep_results = [
                 episode,
                 total_reward,
                 total_loss,
-                total_max_q_val / step,
                 agent.epsilon,
                 time.time() - startTime,
             ]
             training_results.append(ep_results)
             print(
-                f"Episode:{ep_results[0]} Reward:{ep_results[1]} Loss:{ep_results[2]} Avg_Max_Q:{ep_results[3]} Epsilon:{ep_results[4]} Duration:{ep_results[5]}"
+                f"Episode:{ep_results[0]} Reward:{ep_results[1]} Loss:{ep_results[2]} Epsilon:{ep_results[4]} Duration:{ep_results[5]}"
             )
 
             if SAVE_MODELS:
