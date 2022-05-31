@@ -16,7 +16,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 TRAIN_MODEL = True
-LOAD_FROM_FILE = True
+LOAD_FROM_FILE = False
 SAVE_MODELS = True
 RENDER_GAME = None  # None / human to not watch / watch
 MODEL_PATH = f"models/{config['SAVING']['model_tag']}"

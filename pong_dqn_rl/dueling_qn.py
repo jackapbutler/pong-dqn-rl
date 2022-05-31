@@ -15,21 +15,21 @@ class DuelCNN(nn.Module):
         self.representation = nn.Sequential(
             nn.Conv2d(in_channels=4, out_channels=10, kernel_size=8, stride=4),
             nn.Conv2d(in_channels=10, out_channels=2, kernel_size=4, stride=2),
-        )
+        ).double()
 
         # Action layer
         self.action_layer = nn.Sequential(
             nn.Linear(in_features=96, out_features=50),
             nn.LeakyReLU(),
             nn.Linear(in_features=50, out_features=output_size),
-        )
+        ).double()
 
         # State Value layer
         self.value_layer = nn.Sequential(
             nn.Linear(in_features=96, out_features=50),
             nn.LeakyReLU(),
             nn.Linear(in_features=50, out_features=output_size),
-        )
+        ).double()
 
     def forward(self, x) -> float:
         x = self.representation(x)
