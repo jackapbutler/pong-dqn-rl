@@ -2,11 +2,10 @@
 import collections
 import configparser
 import random
-from typing import Deque, List, Tuple
-
+from typing import Tuple
+import gym
 import cv2
 import dueling_qn as dqn
-import gym
 import numpy as np
 import torch
 
@@ -52,9 +51,7 @@ class Agent:
         self.epsilon_minimum = 0.05  # Minimum for Explore
 
         # Deque holds replay mem.
-        self.memory: Deque[List] = collections.deque(
-            maxlen=int(config["TRAINING"]["max_memory"])
-        )
+        self.memory = collections.deque(maxlen=int(config["TRAINING"]["max_memory"]))
 
         # Create two model for DDQN algorithm
         self.online_model = dqn.DuelCNN(output_size=self.action_size).to(DEVICE)
