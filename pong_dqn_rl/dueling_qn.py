@@ -1,6 +1,6 @@
 """Defines the Neural Network"""
-import torchsummary
 import torch.nn as nn
+import torchsummary
 
 
 class DuelCNN(nn.Module):
