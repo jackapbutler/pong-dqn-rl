@@ -16,9 +16,9 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 TRAIN_MODEL = True
-LOAD_FROM_FILE = False
+LOAD_FROM_FILE = True
 SAVE_MODELS = True
-RENDER_GAME = None  # 'human' to watch
+RENDER_GAME = None  # None / human to not watch / watch
 MODEL_PATH = f"models/{config['SAVING']['model_tag']}"
 
 environment: gym.Env = gym.make(config["GAME"]["env"], render_mode=RENDER_GAME)

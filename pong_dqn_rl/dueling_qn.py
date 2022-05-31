@@ -23,14 +23,14 @@ class DuelCNN(nn.Module):
         )
 
         # Action layer
-        self.Alinear1 = nn.Linear(in_features=16, out_features=128)
+        self.Alinear1 = nn.Linear(in_features=16, out_features=80)
         self.Alrelu = nn.LeakyReLU()  # Linear 1 activation funct
-        self.Alinear2 = nn.Linear(in_features=128, out_features=output_size)
+        self.Alinear2 = nn.Linear(in_features=80, out_features=output_size)
 
         # State Value layer
-        self.Vlinear1 = nn.Linear(in_features=16, out_features=128)
+        self.Vlinear1 = nn.Linear(in_features=16, out_features=80)
         self.Vlrelu = nn.LeakyReLU()  # Linear 1 activation funct
-        self.Vlinear2 = nn.Linear(in_features=128, out_features=1)  # Only 1 node
+        self.Vlinear2 = nn.Linear(in_features=80, out_features=1)  # Only 1 node
 
     def forward(self, x) -> float:
         x = self.representation(x)
