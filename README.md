@@ -1,5 +1,5 @@
 # pong-dqn-rl
-Deep Q-Learning example for Pong. 
+Deep Dueling Neural Network Reinforcement Learning for Pong. 
 
 This is an implementation of the Duel Double DQN algorithm in PyTorch for solving the OpenAI GYM Atari Pong environment. The agent learns to play to an impressive standard in just 900 episodes.
 
