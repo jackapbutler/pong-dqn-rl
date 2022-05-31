@@ -21,19 +21,23 @@ SAVE_MODELS = True
 RENDER_GAME = None  # 'human' to watch
 MODEL_PATH = f"models/{config['SAVING']['model_tag']}"
 
-if not os.path.exists(MODEL_PATH):
-    os.makedirs(MODEL_PATH)
-
 environment: gym.Env = gym.make(config["GAME"]["env"], render_mode=RENDER_GAME)
 agent: Agent = Agent(environment)
 training_results = []
 
-if LOAD_FROM_FILE:
-    agent.online_model.load_state_dict(torch.load(f"{MODEL_PATH}/model.pkl"))
+if os.path.exists(MODEL_PATH):
+    if LOAD_FROM_FILE:
+        agent.online_model.load_state_dict(torch.load(f"{MODEL_PATH}/model.pkl"))
 
-    with open(f"{MODEL_PATH}/parameters.json") as outfile:
-        loaded_parameters = json.load(outfile)
-        agent.epsilon = loaded_parameters.get("epsilon")
+        with open(f"{MODEL_PATH}/parameters.json") as outfile:
+            loaded_parameters = json.load(outfile)
+            agent.epsilon = loaded_parameters.get("epsilon")
+    else:
+        print(
+            f"Preventing you from overriding the existing <{MODEL_PATH.split('/')[1]}> model! Change this if you like ... "
+        )
+else:
+    os.makedirs(MODEL_PATH)
 
 last_100_ep_reward: Deque[float] = collections.deque(maxlen=100)
 total_step = 1  # Cumulative sum of all steps in episodes
