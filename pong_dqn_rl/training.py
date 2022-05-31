@@ -1,13 +1,15 @@
 """This script provides the methods for training the agent in the Pong environment"""
+import collections
+import configparser
 import json
-import torch
+import statistics
+import time
+from typing import Deque
+
 import gym
 import numpy as np
-import collections
-import time
-import json
-import rl_agent
-import configparser
+import torch
+from rl_agent import Agent
 
 TRAIN_MODEL = True
 LOAD_FROM_FILE = False
@@ -23,7 +25,7 @@ environment: gym.Env = (
     else gym.make(config["GAME"]["env"], render_mode="human")
 )
 
-agent: rl_agent.Agent = rl_agent.Agent(environment)
+agent: Agent = Agent(environment)
 
 if LOAD_FROM_FILE:
     agent.online_model.load_state_dict(
@@ -41,7 +43,9 @@ if LOAD_FROM_FILE:
 else:
     startEpisode = 1
 
-last_100_ep_reward = collections.deque(maxlen=100)  # Last 100 episode rewards
+last_100_ep_reward: Deque[float] = collections.deque(
+    maxlen=100
+)  # Last 100 episode rewards
 total_step = 1  # Cumulkative sum of all steps in episodes
 for episode in range(startEpisode, int(config["TRAINING"]["max_episode"])):
 
@@ -125,7 +129,7 @@ for episode in range(startEpisode, int(config["TRAINING"]["max_episode"])):
                 current_time_format,
                 total_reward,
                 total_loss,
-                np.mean(last_100_ep_reward),
+                statistics.mean(last_100_ep_reward),
                 avg_max_q_val,
                 agent.epsilon,
                 time_passed,

@@ -10,7 +10,7 @@ format: ## Formats the code, import statements and type hints
 	isort .
 	mypy .
 
-format: ## Runs the tests in the tests directory
+test: ## Runs the tests in the tests directory
 	pytest tests/ 
 
 train: ## Runs a training session following the configuration in config.ini

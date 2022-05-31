@@ -1,12 +1,13 @@
 """Defines the Agent"""
-import random
 import collections
 import configparser
+import random
 from typing import Tuple
-import dueling_qn as dqn
-import torch
+
 import cv2
+import dueling_qn as dqn
 import numpy as np
+import torch
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -110,7 +111,7 @@ class Agent:
         """
         # We get out minibatch and turn it to numpy array
         state, action, reward, next_state, done = zip(
-            *random.sample(self.memory, config["TRAINING"]["batch"])
+            *random.sample(self.memory, int(config["TRAINING"]["batch"]))
         )
 
         # Concat batches in one array
