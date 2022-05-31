@@ -10,6 +10,8 @@ import gym
 import numpy as np
 import torch
 
+torch.set_default_dtype(torch.float)
+
 config = configparser.ConfigParser()
 config.read("config.ini")
 DEVICE = config["TRAINING"]["device"]
@@ -88,7 +90,7 @@ class Agent:
             action = random.randrange(self.action_size)
         else:
             with torch.no_grad():
-                state = torch.tensor(state, dtype=torch.float, device=DEVICE)
+                state = torch.tensor(state, device=DEVICE)
                 q_values = self.online_model.forward(state.unsqueeze(0))
                 action = torch.argmax(q_values).item()
 
@@ -104,17 +106,13 @@ class Agent:
             *random.sample(self.memory, int(config["TRAINING"]["batch"]))
         )
 
-        # Concat batches in one array
-        # (np.arr, np.arr) ==> np.BIGarr
-        state = np.concatenate(state)
-        next_state = np.concatenate(next_state)
-
+        # Concat state batches in one array
         # Convert them to tensors
-        state = torch.tensor(state, dtype=torch.float, device=DEVICE)
-        next_state = torch.tensor(next_state, dtype=torch.float, device=DEVICE)
+        state = torch.tensor(np.concatenate(state), device=DEVICE)
+        next_state = torch.tensor(np.concatenate(next_state), device=DEVICE)
         action = torch.tensor(action, dtype=torch.long, device=DEVICE)
-        reward = torch.tensor(reward, dtype=torch.float, device=DEVICE)
-        done = torch.tensor(done, dtype=torch.float, device=DEVICE)
+        reward = torch.tensor(reward, device=DEVICE)
+        done = torch.tensor(done, device=DEVICE)
 
         # Make predictions
         state_q_values = self.online_model(state)
