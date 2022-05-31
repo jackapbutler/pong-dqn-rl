@@ -20,5 +20,6 @@ This is an implementation of the Duel Double DQN algorithm in PyTorch for solvin
 Run the commands in the repository `Makefile` for training, formatting and testing the code.
 
 # Resources
-(Playing Atari with Deep Reinforcement Learning)[https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf]
-(Dueling Network Architectures for Deep Reinforcement Learning)[https://arxiv.org/abs/1511.06581]
+[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
+
+[Dueling Network Architectures for Deep Reinforcement Learning](https://arxiv.org/abs/1511.06581)

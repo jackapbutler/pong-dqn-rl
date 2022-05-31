@@ -7,47 +7,37 @@ import time
 from typing import Deque
 
 import gym
+import os
 import numpy as np
 import torch
 from rl_agent import Agent
 
-TRAIN_MODEL = True
-LOAD_FROM_FILE = False
-SAVE_MODELS = True
-RENDER_GAME = True
-
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-environment: gym.Env = (
-    gym.make(config["GAME"]["env"], render_mode="human")
-    if RENDER_GAME
-    else gym.make(config["GAME"]["env"], render_mode="human")
-)
+TRAIN_MODEL = True
+LOAD_FROM_FILE = False
+SAVE_MODELS = True
+RENDER_GAME = None  # 'human' to watch
+MODEL_PATH = f"models/{config['SAVING']['model_tag']}"
 
+if not os.path.exists(MODEL_PATH):
+    os.makedirs(MODEL_PATH)
+
+environment: gym.Env = gym.make(config["GAME"]["env"], render_mode=RENDER_GAME)
 agent: Agent = Agent(environment)
 
 if LOAD_FROM_FILE:
-    agent.online_model.load_state_dict(
-        torch.load(config["SAVING"]["path"] + config["SAVING"]["file_episode"] + ".pkl")
-    )
+    agent.online_model.load_state_dict(torch.load(f"{MODEL_PATH}/model.pkl"))
 
-    with open(
-        config["SAVING"]["path"] + config["SAVING"]["file_episode"] + ".json"
-    ) as outfile:
-        param = json.load(outfile)
-        agent.epsilon = param.get("epsilon")
+    with open(f"{MODEL_PATH}/parameters.json") as outfile:
+        parameters = json.load(outfile)
+        agent.epsilon = parameters.get("epsilon")
 
-    startEpisode = int(config["SAVING"]["file_episode"]) + 1
+last_100_ep_reward: Deque[float] = collections.deque(maxlen=100)
+total_step = 1  # Cumulative sum of all steps in episodes
 
-else:
-    startEpisode = 1
-
-last_100_ep_reward: Deque[float] = collections.deque(
-    maxlen=100
-)  # Last 100 episode rewards
-total_step = 1  # Cumulkative sum of all steps in episodes
-for episode in range(startEpisode, int(config["TRAINING"]["max_episode"])):
+for episode in range(0, int(config["TRAINING"]["max_episode"])):
 
     startTime = time.time()  # Keep time
     state = environment.reset()  # Reset env
@@ -94,55 +84,27 @@ for episode in range(startEpisode, int(config["TRAINING"]["max_episode"])):
         total_reward += reward
         total_step += 1
         if total_step % 1000 == 0:
-            agent.adaptiveEpsilon()  # Decrase epsilon
+            agent.adaptiveEpsilon()  # Decrease epsilon
 
         if done:  # Episode completed
             currentTime = time.time()  # Keep current time
             time_passed = currentTime - startTime  # Find episode duration
-            current_time_format = time.strftime(
-                "%H:%M:%S", time.gmtime()
-            )  # Get current dateTime as HH:MM:SS
-            epsilonDict = {
-                "epsilon": agent.epsilon
-            }  # Create epsilon dict to save model as file
+            parameters = {"epsilon": agent.epsilon}
 
-            if (
-                SAVE_MODELS and episode % int(config["SAVING"]["interval"]) == 0
-            ):  # Save model as file
-                weightsPath = f"{config['SAVING']['path']}{episode}.pkl"
-                epsilonPath = f"{config['SAVING']['path']}{episode}.json"
+            if SAVE_MODELS and episode % int(config["SAVING"]["interval"]) == 0:
+                torch.save(agent.online_model.state_dict(), f"{MODEL_PATH}/model.pkl")
 
-                torch.save(agent.online_model.state_dict(), weightsPath)
-                with open(epsilonPath, "w") as outfile:
-                    json.dump(epsilonDict, outfile)
+                with open(f"{MODEL_PATH}/parameters.json", "w") as outfile:
+                    json.dump(parameters, outfile)
 
             if TRAIN_MODEL:
-                agent.target_model.load_state_dict(
-                    agent.online_model.state_dict()
-                )  # Update target model
+                # update target model
+                agent.target_model.load_state_dict(agent.online_model.state_dict())
 
             last_100_ep_reward.append(total_reward)
             avg_max_q_val = total_max_q_val / step
 
-            outStr = "Episode:{} Time:{} Reward:{:.2f} Loss:{:.2f} Last_100_Avg_Rew:{:.3f} Avg_Max_Q:{:.3f} Epsilon:{:.2f} Duration:{:.2f} Step:{} CStep:{}".format(
-                episode,
-                current_time_format,
-                total_reward,
-                total_loss,
-                statistics.mean(last_100_ep_reward),
-                avg_max_q_val,
-                agent.epsilon,
-                time_passed,
-                step,
-                total_step,
+            print(
+                f"Episode:{episode} Reward:{total_reward} Last_100_Avg_Rew:{statistics.mean(last_100_ep_reward)} Loss:{total_loss} Avg_Max_Q:{avg_max_q_val} Epsilon:{agent.epsilon,} Duration:{time_passed} Step/Total:{step}/{total_step}"
             )
-            print(outStr)
-
-            if SAVE_MODELS:
-                outputPath = (
-                    config["SAVING"]["PATH"] + "out" + ".txt"
-                )  # Save outStr to file
-                with open(outputPath, "a") as outfile:
-                    outfile.write(outStr + "\n")
-
             break
