@@ -6,6 +6,9 @@ This is an implementation of the Duel Double DQN algorithm in PyTorch for solvin
 # Requirements
 
 * Python 3.10
+* Python tools;
+    * `Poetry` for environment management
+    * `Pyenv` for managing Python versions
 * Python packages; 
     * `torch` for neural networks
     * `gym` for RL environments
