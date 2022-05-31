@@ -9,8 +9,6 @@ import dueling_qn as dqn
 import numpy as np
 import torch
 
-torch.set_default_dtype(torch.float)
-
 config = configparser.ConfigParser()
 config.read("config.ini")
 DEVICE = config["TRAINING"]["device"]
@@ -54,12 +52,8 @@ class Agent:
         self.memory = collections.deque(maxlen=int(config["TRAINING"]["max_memory"]))
 
         # Create two model for DDQN algorithm
-        self.online_model = dqn.DuelCNN(
-            h=self.target_h, w=self.target_w, output_size=self.action_size
-        ).to(DEVICE)
-        self.target_model = dqn.DuelCNN(
-            h=self.target_h, w=self.target_w, output_size=self.action_size
-        ).to(DEVICE)
+        self.online_model = dqn.DuelCNN(output_size=self.action_size).to(DEVICE)
+        self.target_model = dqn.DuelCNN(output_size=self.action_size).to(DEVICE)
         self.target_model.load_state_dict(self.online_model.state_dict())
         self.target_model.eval()
 
@@ -90,7 +84,7 @@ class Agent:
             action = random.randrange(self.action_size)
         else:
             with torch.no_grad():
-                state = torch.tensor(state, device=DEVICE)
+                state = torch.tensor(state, dtype=torch.float32, device=DEVICE)
                 q_values = self.online_model.forward(state.unsqueeze(0))
                 action = torch.argmax(q_values).item()
 
@@ -108,11 +102,13 @@ class Agent:
 
         # Concat state batches in one array
         # Convert them to tensors
-        state = torch.tensor(np.concatenate(state), device=DEVICE)
-        next_state = torch.tensor(np.concatenate(next_state), device=DEVICE)
+        state = torch.tensor(np.concatenate(state), dtype=torch.float32, device=DEVICE)
+        next_state = torch.tensor(
+            np.concatenate(next_state), dtype=torch.float32, device=DEVICE
+        )
         action = torch.tensor(action, dtype=torch.long, device=DEVICE)
-        reward = torch.tensor(reward, device=DEVICE)
-        done = torch.tensor(done, device=DEVICE)
+        reward = torch.tensor(reward, dtype=torch.float32, device=DEVICE)
+        done = torch.tensor(done, dtype=torch.float32, device=DEVICE)
 
         # Make predictions
         state_q_values = self.online_model(state)
