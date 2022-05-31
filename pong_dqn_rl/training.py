@@ -16,7 +16,7 @@ config = configparser.ConfigParser()
 config.read("config.ini")
 
 TRAIN_MODEL = True
-LOAD_FROM_FILE = False
+LOAD_FROM_FILE = True
 SAVE_MODELS = True
 RENDER_GAME = None  # None / human to not watch / watch
 MODEL_PATH = f"models/{config['SAVING']['model_tag']}"
@@ -89,18 +89,17 @@ for episode in range(0, int(config["TRAINING"]["max_episode"])):
         total_max_q_val += max_q
         total_reward += reward
         total_step += 1
-
         if total_step % 1000 == 0:
             agent.adaptiveEpsilon()  # Decrease epsilon
 
         if done:
             # Episode completed
             ep_results = [
-                int(episode),
-                float(total_reward),
-                float(total_loss),
-                float(agent.epsilon),
-                float(time.time() - startTime),
+                episode,
+                total_reward,
+                total_loss,
+                agent.epsilon,
+                time.time() - startTime,
             ]
             training_results.append(ep_results)
             print(
