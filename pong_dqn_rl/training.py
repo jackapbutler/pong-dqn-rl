@@ -2,12 +2,12 @@
 import collections
 import configparser
 import json
+import os
 import sys
 import time
 from typing import Deque
 
 import gym
-import os
 import numpy as np
 import torch
 from rl_agent import Agent

@@ -39,15 +39,11 @@ class Agent:
             self.state_size_w,
         ]
 
-        # Trust rate to our experiences
-        self.gamma = float(
-            config["TRAINING"]["gamma"]
-        )  # Discount coef for future predictions
+        # Discount rate for future predictions
+        self.gamma = float(config["TRAINING"]["gamma"])
         self.alpha = float(config["TRAINING"]["alpha"])  # Learning Rate
 
-        # After many experinces epsilon will be 0.05
-        # So we will do less Explore more Exploit
-        # Adaptive Epsilon Decay Rate
+        # Adaptive Epsilon Decay Rate for decaying exploration rates
         self.epsilon = 1  # Explore or Exploit
         self.epsilon_decay = float(config["TRAINING"]["epsilon"])
         self.epsilon_minimum = 0.05  # Minimum for Explore
@@ -87,20 +83,14 @@ class Agent:
         Two option can be selectedd if explore select random action
         if exploit ask nnet for action
         """
-
-        act_protocol = "Explore" if random.uniform(0, 1) <= self.epsilon else "Exploit"
-
-        if act_protocol == "Explore":
+        if random.uniform(0, 1) <= self.epsilon:
+            # Explore
             action = random.randrange(self.action_size)
         else:
             with torch.no_grad():
-                state = torch.tensor(state, dtype=torch.float, device=DEVICE).unsqueeze(
-                    0
-                )
-                q_values = self.online_model.forward(state)  # (1, action_size)
-                action = torch.argmax(
-                    q_values
-                ).item()  # Returns the indices of the maximum value of all elements
+                state = torch.tensor(state, dtype=torch.float, device=DEVICE)
+                q_values = self.online_model.forward(state.unsqueeze(0))
+                action = torch.argmax(q_values).item()
 
         return action
 

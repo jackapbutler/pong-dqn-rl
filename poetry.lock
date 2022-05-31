@@ -409,6 +409,14 @@ python-versions = ">=3.7.0"
 typing-extensions = "*"
 
 [[package]]
+name = "torch-summary"
+version = "1.4.5"
+description = "Model summary in PyTorch, based off of the original torchsummary."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "tqdm"
 version = "4.64.0"
 description = "Fast, Extensible Progress Meter"
@@ -461,7 +469,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "c379b9247762d5b02cf54dc1c200fd34b655258b3917b09a3e949d3fcf94da98"
+content-hash = "dd75bae5cf79cb28f0c422f481e42f03c2dbcb04eaa66a820cb998b54ebc6f8b"
 
 [metadata.files]
 ale-py = [
@@ -686,6 +694,10 @@ torch = [
     {file = "torch-1.11.0-cp39-cp39-win_amd64.whl", hash = "sha256:44a1d02fd20f827f0f36dc26fdcfc45e793806a6ad52769a22260655a77a4369"},
     {file = "torch-1.11.0-cp39-none-macosx_10_9_x86_64.whl", hash = "sha256:50fd9bf85c578c871c28f1cb0ace9dfc6024401c7f399b174fb0f370899f4454"},
     {file = "torch-1.11.0-cp39-none-macosx_11_0_arm64.whl", hash = "sha256:0e48af66ad755f0f9c5f2664028a414f57c49d6adc37e77e06fe0004da4edb61"},
+]
+torch-summary = [
+    {file = "torch_summary-1.4.5-py3-none-any.whl", hash = "sha256:6127efb631f34ba8cbd28e92e8f7ddc2903ea0cbc44c80f15b7363b8f558cd8c"},
+    {file = "torch_summary-1.4.5.tar.gz", hash = "sha256:44eac21777dbbda7b8404d57a43c09d83fd9c93d0c1f0c960b5083ccb24d6d21"},
 ]
 tqdm = [
     {file = "tqdm-4.64.0-py2.py3-none-any.whl", hash = "sha256:74a2cdefe14d11442cedf3ba4e21a3b84ff9a2dbdc6cfae2c34addb2a14a5ea6"},
