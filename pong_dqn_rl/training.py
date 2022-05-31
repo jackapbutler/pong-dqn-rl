@@ -34,7 +34,7 @@ if os.path.exists(MODEL_PATH):
             agent.epsilon = loaded_parameters.get("epsilon")
     else:
         print(
-            f"Preventing you from overriding the existing <{MODEL_PATH.split('/')[1]}> model! Change this if you like ... "
+            f"Preventing you from overriding the existing <{MODEL_PATH.split('/')[1]}> model!"
         )
         sys.exit()
 else:
