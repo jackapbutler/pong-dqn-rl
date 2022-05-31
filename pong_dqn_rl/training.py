@@ -103,7 +103,7 @@ for episode in range(0, int(config["TRAINING"]["max_episode"])):
             ]
             training_results.append(ep_results)
             print(
-                f"Episode:{ep_results[0]} Reward:{ep_results[1]} Loss:{ep_results[2]} Epsilon:{ep_results[4]} Duration:{ep_results[5]}"
+                f"Episode:{ep_results[0]} Reward:{ep_results[1]} Loss:{ep_results[2]} Epsilon:{ep_results[3]} Duration:{ep_results[4]}"
             )
 
             if SAVE_MODELS:
